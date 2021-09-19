@@ -12,14 +12,14 @@ class CatalogProduct {
    * Catalog
    * @param {string} name
    * @param {string} description
-   * @param {string} distributor
+   * @param {string} distributorId
    * @param {string} category
    * @param {string} barCode
    */
     async create(request, response) {
         try {
             Validate.validateProductsCatalog(request.body)
-            const { name, description, distributorId, category, barCode, amount } = request.body
+            const { name, description, distributorId, category, barCode } = request.body
 
             const distributor = await distributorsModel.getDistributorById(distributorId)
             if (!distributor) throw new ExceptionError(404, 'Distribuidor não encontrado')
@@ -33,7 +33,7 @@ class CatalogProduct {
             productAlreadyExists = await catalogProductsModel.getProductByNameAndDistributor(name, distributorId)
             if (productAlreadyExists) throw new ExceptionError(401, 'Produto ja cadastrado')
 
-            const product = await catalogProductsModel.setProduct(name, description, distributorId, category, barCode, amount)
+            const product = await catalogProductsModel.setProduct(name, description, distributorId, category, barCode)
 
             return response.status(201).json(product)
 

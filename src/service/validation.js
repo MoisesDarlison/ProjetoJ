@@ -33,8 +33,7 @@ module.exports = {
                 description: { type: 'string' },
                 distributorId: { type: 'string' },
                 category: { type: 'string' },
-                barCode: { type: 'string' },
-                amount: { type: 'number' },
+                barCode: { type: 'string' }
             },
             required: ['name', 'description', 'distributorId'],
             additionalProperties: false,
@@ -97,15 +96,15 @@ module.exports = {
         const schema = {
             type: 'object',
             properties: {
-                productId: { type: 'string' },
+                purchaseId: { type: 'string' },
                 quantity: { type: 'number' },
                 salesPrice: { type: 'number' },
-                discount: { type: 'number' },
                 isSaleOff: { type: 'boolean', default: false },
+                discount: { type: 'number' },
                 observation: { type: 'string' }
 
             },
-            required: ['productId', 'quantity', 'salesPrice'],
+            required: ['purchaseId', 'quantity', 'salesPrice'],
             additionalProperties: false,
         }
 

@@ -7,7 +7,7 @@ class DistributorsModel {
         const response = await db.collection('distributors')
             .add({ name: nameFormatted, salesMargin })
 
-        return { id: response.id, name, salesMargin }
+        return { id: response.id }
     }
 
     async getDistributorById(id) {

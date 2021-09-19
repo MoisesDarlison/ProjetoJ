@@ -2,14 +2,14 @@ const db = require('../configs/databaseConnection')
 const formattedData = require('../service/normalize')
 
 class CatalogProductsModel {
-    async setProduct(name, description, distributorId, category = null, barCode = null, amount) {
+    async setProduct(name, description, distributorId, category = null, barCode = null) {
         const nameFormatted = formattedData.formattedToUpperCaseOnlyFirstCharacter(name)
         const barCodeFormatted = formattedData.formattedToUpperCase(barCode)
 
         const response = await db.collection('products')
-            .add({ name: nameFormatted, description, distributorId, category, barCode: barCodeFormatted, amount })
+            .add({ name: nameFormatted, description, distributorId, category, barCode: barCodeFormatted })
 
-        return { id: response.id, name: nameFormatted }
+        return { id: response.id }
     }
 
     async getProductByBarCode(barCode) {
@@ -25,9 +25,10 @@ class CatalogProductsModel {
 
     async getProductByNameAndDistributor(name, distributorId) {
         const nameFormatted = formattedData.formattedToUpperCaseOnlyFirstCharacter(name)
+
         const response = await db.collection('products')
             .where('name', '==', nameFormatted)
-            .where('distributor', '==', distributorId)
+            .where('distributorId', '==', distributorId)
             .get()
 
         if (response.empty) return false
