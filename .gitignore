@@ -1,0 +1,6 @@
+# bibliotecas
+/node_modules
+
+# variaveis de ambiente
+/env/.env
+/env/*.json
