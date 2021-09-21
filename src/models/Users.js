@@ -11,6 +11,8 @@ class UsersModel {
     async getUsers() {
         const response = await db.collection('users').get()
 
+        if (response.empty) return []
+
         return formattedUserReturnGet(response)
     }
 

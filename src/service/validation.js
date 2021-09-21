@@ -116,6 +116,27 @@ module.exports = {
         return true
     },
 
+    validateTypeBodyOnly(data) {
+        const schema = {
+            type: 'object',
+            properties: {
+                id: { type: 'string' },
+                name: { type: 'string', nullable: false },
+                salesMargin: { type: 'number', nullable: false }
+            },
+            nullable: false,
+            required: [],
+            additionalProperties: true,
+        }
+
+        const validate = ajv.compile(schema)
+        const valid = validate(data)
+
+        if (!valid) throw new ExceptionError(400, hasMessageError(validate))
+
+        return true
+    }
+
 }
 
 function hasMessageError(exception) {

@@ -3,6 +3,6 @@ const UserController = require('../controllers/userController')
 const { create, list } = new UserController()
 
 routes.post('/new', create)
-routes.get('/users', list)
+routes.get('/list', list)
 
 module.exports = routes
