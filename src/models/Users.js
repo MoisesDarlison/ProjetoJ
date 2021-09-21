@@ -5,15 +5,21 @@ class UsersModel {
         const response = await db.collection('users')
             .add({ user, password })
 
-        return { id: response.id, userNew: user }
+        return { id: response.id }
     }
 
-    async getUserByUserName(user) {
-        const response = await db.collection('users').where('user', '==', user).get()
+    async getUsers() {
+        const response = await db.collection('users').get()
+
+        return formattedUserReturnGet(response)
+    }
+
+    async getUserByUserName(userParam) {
+        const response = await db.collection('users').where('user', '==', userParam).get()
 
         if (response.empty) return false
 
-        return { id: response.docs[0].id, user: response.docs[0].data().user }
+        return formattedUserReturnGet(response)
     }
 
     async getValidateUserPassword(user, password) {
@@ -23,8 +29,18 @@ class UsersModel {
 
         if (response.empty) return false
 
-        return { id: response.docs[0].id, user: response.docs[0].data().user }
+        return formattedUserReturnGet(response)
     }
 }
 
+function formattedUserReturnGet(docs) {
+    let users = []
+    docs.forEach(doc => {
+        users.push({
+            id: doc.id,
+            user: doc.data().user
+        })
+    })
+    return users
+}
 module.exports = UsersModel

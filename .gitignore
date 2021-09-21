@@ -4,3 +4,6 @@
 # variaveis de ambiente
 /env/.env
 /env/*.json
+
+# informações do projeto
+/Info

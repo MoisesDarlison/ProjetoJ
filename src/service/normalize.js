@@ -4,6 +4,7 @@ module.exports = {
     formattedToUpperCase(word) {
         return word.toUpperCase()
     },
+
     formattedToUpperCaseOnlyFirstCharacter(string) {
         let response = ''
         const arrayString = string.trim().split(' ')
@@ -12,6 +13,6 @@ module.exports = {
         })
 
         return response.trim()
-    },
+    }
 
 }

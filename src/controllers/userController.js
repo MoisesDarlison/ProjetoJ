@@ -19,9 +19,19 @@ class User {
             const userAlreadyExists = await usersModel.getUserByUserName(user)
             if (userAlreadyExists) throw new ExceptionError(401, 'User Already Exists')
 
-            const { id, userNew } = await usersModel.setUser(user, password)
+            const { id } = await usersModel.setUser(user, password)
 
-            return response.status(201).json({ id, userNew })
+            return response.status(201).json({ id })
+        } catch (error) {
+            return response.status(error.status || 500).json(error.message)
+        }
+    }
+    async list(request, response) {
+        try {
+
+            const users = await usersModel.getUsers()
+
+            return response.status(201).json(users)
         } catch (error) {
             return response.status(error.status || 500).json(error.message)
         }
