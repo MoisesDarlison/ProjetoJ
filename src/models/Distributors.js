@@ -37,6 +37,7 @@ class DistributorsModel {
     async updateDistributor(id, data) {
         const dataValid = removeInvalidData(data)
         if (Object.keys(dataValid).length < 1) return false
+        if (dataValid.name) dataValid.name = formattedData.formattedToUpperCase(dataValid.name)
 
         const response = await db.collection('distributors').doc(id).update(
             { ...dataValid }

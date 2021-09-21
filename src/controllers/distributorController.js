@@ -17,7 +17,7 @@ class Distributor {
             const { name, salesMargin } = request.body
 
             const distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
-            if (distributorAlreadyExists) throw new ExceptionError(401, 'Distribuidor não encontrado')
+            if (distributorAlreadyExists) throw new ExceptionError(401, 'Distribuidor ja cadastrado')
 
             const distributor = await distributorsModel.setDistributor(name, salesMargin)
 
@@ -64,10 +64,13 @@ class Distributor {
     async update(request, response) {
         try {
             const { id } = request.params
-            Validate.validateTypeBodyOnly(request.body)
+            Validate.validateDistributor(request.body)
             const { name, salesMargin } = request.body
 
             const data = { name, salesMargin }
+
+            const distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
+            if (distributorAlreadyExists && distributorAlreadyExists.id != id) throw new ExceptionError(401, 'Distribuidor ja cadastrado')
 
             const distributor = await distributorsModel.updateDistributor(id, data)
             if (!distributor) throw new ExceptionError(401, 'Distribuidor não encontrado')
