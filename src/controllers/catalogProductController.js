@@ -19,7 +19,7 @@ class CatalogProduct {
     async create(request, response) {
         try {
             Validate.validateProductsCatalog(request.body)
-            const { name, description, distributorId, category, barCode } = request.body
+            const { name, description, distributorId, category, barCode = null } = request.body
 
             const distributor = await distributorsModel.getDistributorById(distributorId)
             if (!distributor) throw new ExceptionError(404, 'Distribuidor não encontrado')
@@ -36,6 +36,21 @@ class CatalogProduct {
             const product = await catalogProductsModel.setProduct(name, description, distributorId, category, barCode)
 
             return response.status(201).json(product)
+
+        } catch (error) {
+            return response.status(error.status || 500).json(error.message)
+        }
+    }
+
+    /***
+    * Catalog - Lista tudo sem filtro
+    * @param {number} maxProducts não obrigatorio
+    */
+    async list(request, response) {
+        try {
+
+            const products = await catalogProductsModel.getProducts()
+            return response.status(201).json(products)
 
         } catch (error) {
             return response.status(error.status || 500).json(error.message)

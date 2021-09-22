@@ -4,9 +4,12 @@ const formattedData = require('../service/normalize')
 class DistributorsModel {
 
     async setDistributor(name, salesMargin) {
-        const nameFormatted = formattedData.formattedToUpperCase(name)
+        const data = {
+            name: formattedData.formattedToUpperCase(name),
+            salesMargin: salesMargin ? salesMargin : 0
+        }
         const response = await db.collection('distributors')
-            .add({ name: nameFormatted, salesMargin })
+            .add(data)
 
         return { id: response.id }
     }
