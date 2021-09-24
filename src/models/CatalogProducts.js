@@ -1,72 +1,64 @@
 const db = require('../configs/databaseConnection')
-const formattedData = require('../service/normalize')
+const formattedData = require('../service/formatted')
+const {patternReturnModelByGet} = require('../service/patternReturns')
 
 class CatalogProductsModel {
-    async setProduct(name, description, distributorId, category, barCode) {
-        const data = {
-            name: formattedData.formattedToUpperCaseOnlyFirstCharacter(name),
-            description,
-            distributorId,
-            category: category || null,
-            barCode: barCode ? formattedData.formattedToUpperCase(barCode) : null
-        }
-        const response = await db.collection('products')
-            .add(data)
 
-        return { id: response.id }
+  async setProduct(name, description, distributorId, category, barCode) {
+    const data = {
+      name: formattedData.formattedToUpperCaseOnlyFirstCharacter(name),
+      description,
+      distributorId,
+      category: category || null,
+      barCode: barCode ? formattedData.formattedToUpperCase(barCode) : null,
     }
+    const response = await db.collection('products')
+      .add(data)
 
-    async getProducts() {
-        const response = await db.collection('products').get()
+    return { id: response.id }
+  }
 
-        if (response.empty) return []
+  async getProducts() {
+    const response = await db.collection('products').get()
 
-        return formattedProductsReturn(response)
-    }
+    if (response.empty) return []
 
-    async getProductById(id) {
+    return patternReturnModelByGet(response)
+  }
 
-        const response = await db.collection('products').doc(id).get()
+  async getProductById(id) {
 
-        if (!response.exists) return false
+    const response = await db.collection('products').doc(id).get()
 
-        return { id: response.id, ...response.data() }
-    }
+    if (!response.exists) return false
 
-    async getProductByBarCode(barCode) {
-        const barCodeFormatted = formattedData.formattedToUpperCase(barCode)
-        const response = await db.collection('products')
-            .where('barCode', '==', barCodeFormatted)
-            .get()
+    return { id: response.id, ...response.data() }
+  }
 
-        if (response.empty) return false
+  async getProductByBarCode(barCode) {
+    const barCodeFormatted = formattedData.formattedToUpperCase(barCode)
+    const response = await db.collection('products')
+      .where('barCode', '==', barCodeFormatted)
+      .get()
 
-        return formattedProductsReturn(response)
-    }
+    if (response.empty) return false
 
-    async getProductByNameAndDistributor(name, distributorId) {
-        const nameFormatted = formattedData.formattedToUpperCaseOnlyFirstCharacter(name)
+    return patternReturnModelByGet(response)
+  }
 
-        const response = await db.collection('products')
-            .where('name', '==', nameFormatted)
-            .where('distributorId', '==', distributorId)
-            .get()
+  async getProductByNameAndDistributor(name, distributorId) {
+    const nameFormatted = formattedData.formattedToUpperCaseOnlyFirstCharacter(name)
 
-        if (response.empty) return false
+    const response = await db.collection('products')
+      .where('name', '==', nameFormatted)
+      .where('distributorId', '==', distributorId)
+      .get()
 
-        return formattedProductsReturn(response)
-    }
-}
+    if (response.empty) return false
 
-function formattedProductsReturn(docs) {
-    let products = []
-    docs.forEach(doc => {
-        products.push({
-            id: doc.id,
-            ...doc.data()
-        })
-    })
-    return products
+    return patternReturnModelByGet(response)
+  }
+  
 }
 
 module.exports = CatalogProductsModel

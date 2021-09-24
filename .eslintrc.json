@@ -12,6 +12,15 @@
     "semi": ["warn", "never"],
     "quotes": ["warn", "single"],
     "no-unused-vars": "warn",
+    "indent": ["warn", 2],
+    "comma-dangle": ["warn", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "always-multiline"
+      }],
+      "no-multi-spaces":"warn",
     "no-multiple-empty-lines": [
       "warn",
       {

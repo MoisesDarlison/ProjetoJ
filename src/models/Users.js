@@ -1,48 +1,40 @@
 const db = require('../configs/databaseConnection')
+const {patternReturnModelByGet} = require('../service/patternReturns')
 
 class UsersModel {
-    async setUser(user, password) {
-        const response = await db.collection('users')
-            .add({ user, password })
+  
+  async setUser(user, password) {
+    const response = await db.collection('users')
+      .add({ user, password })
 
-        return { id: response.id }
-    }
+    return { id: response.id }
+  }
 
-    async getUsers() {
-        const response = await db.collection('users').get()
+  async getUsers() {
+    const response = await db.collection('users').get()
 
-        if (response.empty) return []
+    if (response.empty) return []
 
-        return formattedUserReturnGet(response)
-    }
+    return patternReturnModelByGet(response)
+  }
 
-    async getUserByUserName(userParam) {
-        const response = await db.collection('users').where('user', '==', userParam).get()
+  async getUserByUserName(userParam) {
+    const response = await db.collection('users').where('user', '==', userParam).get()
 
-        if (response.empty) return false
+    if (response.empty) return false
 
-        return formattedUserReturnGet(response)
-    }
+    return patternReturnModelByGet(response)
+  }
 
-    async getValidateUserPassword(user, password) {
-        const response = await db.collection('users')
-            .where('user', '==', user)
-            .where('password', '==', password).get()
+  async getValidateUserPassword(user, password) {
+    const response = await db.collection('users')
+      .where('user', '==', user)
+      .where('password', '==', password).get()
 
-        if (response.empty) return false
+    if (response.empty) return false
 
-        return formattedUserReturnGet(response)
-    }
+    return patternReturnModelByGet(response)
+  }
 }
 
-function formattedUserReturnGet(docs) {
-    let users = []
-    docs.forEach(doc => {
-        users.push({
-            id: doc.id,
-            user: doc.data().user
-        })
-    })
-    return users
-}
 module.exports = UsersModel

@@ -8,7 +8,7 @@ const distributorsModel = new DistributorsModel()
 
 class CatalogProduct {
 
-    /***
+  /***
    * Catalog
    * @param {string} name
    * @param {string} description
@@ -16,45 +16,45 @@ class CatalogProduct {
    * @param {string} category
    * @param {string} barCode
    */
-    async create(request, response) {
-        try {
-            Validate.validateProductsCatalog(request.body)
-            const { name, description, distributorId, category, barCode = null } = request.body
+  async create(request, response) {
+    try {
+      Validate.validateProductsCatalog(request.body)
+      const { name, description, distributorId, category, barCode = null } = request.body
 
-            const distributor = await distributorsModel.getDistributorById(distributorId)
-            if (!distributor) throw new ExceptionError(404, 'Distribuidor não encontrado')
+      const distributor = await distributorsModel.getDistributorById(distributorId)
+      if (!distributor) throw new ExceptionError(404, 'Distribuidor não encontrado')
 
-            let productAlreadyExists = null
-            if (barCode) {
-                productAlreadyExists = await catalogProductsModel.getProductByBarCode(barCode)
-                if (productAlreadyExists) throw new ExceptionError(401, 'Codigo de barras ja cadastrado')
-            }
+      let productAlreadyExists = null
+      if (barCode) {
+        productAlreadyExists = await catalogProductsModel.getProductByBarCode(barCode)
+        if (productAlreadyExists) throw new ExceptionError(401, 'Codigo de barras ja cadastrado')
+      }
 
-            productAlreadyExists = await catalogProductsModel.getProductByNameAndDistributor(name, distributorId)
-            if (productAlreadyExists) throw new ExceptionError(401, 'Produto ja cadastrado')
+      productAlreadyExists = await catalogProductsModel.getProductByNameAndDistributor(name, distributorId)
+      if (productAlreadyExists) throw new ExceptionError(401, 'Produto ja cadastrado')
 
-            const product = await catalogProductsModel.setProduct(name, description, distributorId, category, barCode)
+      const product = await catalogProductsModel.setProduct(name, description, distributorId, category, barCode)
 
-            return response.status(201).json(product)
+      return response.status(201).json(product)
 
-        } catch (error) {
-            return response.status(error.status || 500).json(error.message)
-        }
+    } catch (error) {
+      return response.status(error.status || 500).json(error.message)
     }
+  }
 
-    /***
+  /***
     * Catalog - Lista tudo sem filtro
     * @param {number} maxProducts não obrigatorio
     */
-    async list(request, response) {
-        try {
+  async list(request, response) {
+    try {
 
-            const products = await catalogProductsModel.getProducts()
-            return response.status(201).json(products)
+      const products = await catalogProductsModel.getProducts()
+      return response.status(201).json(products)
 
-        } catch (error) {
-            return response.status(error.status || 500).json(error.message)
-        }
+    } catch (error) {
+      return response.status(error.status || 500).json(error.message)
     }
+  }
 }
 module.exports = CatalogProduct

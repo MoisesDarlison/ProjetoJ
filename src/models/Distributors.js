@@ -1,85 +1,68 @@
 const db = require('../configs/databaseConnection')
-const formattedData = require('../service/normalize')
+const { formattedToUpperCase, removeInvalidData} = require('../service/formatted')
+const { patternReturnModelByGet } = require('../service/patternReturns')
 
 class DistributorsModel {
 
-    async setDistributor(name, salesMargin) {
-        const data = {
-            name: formattedData.formattedToUpperCase(name),
-            salesMargin: salesMargin ? salesMargin : 0
-        }
-        const response = await db.collection('distributors')
-            .add(data)
-
-        return { id: response.id }
+  async setDistributor(name, salesMargin) {
+    const data = {
+      name: formattedToUpperCase(name),
+      salesMargin: salesMargin ? salesMargin : 0,
     }
 
-    async getDistributors() {
-        const response = await db.collection('distributors').get()
+    const response = await db.collection('distributors').add(data)
 
-        if (response.empty) return []
+    return { id: response.id }
+  }
 
-        return formattedDistributorReturn(response)
-    }
+  async getDistributors() {
+    const response = await db.collection('distributors').get()
+    if (response.empty) return []
 
-    async getDistributorById(id) {
-        const response = await db.collection('distributors').doc(id).get()
+    return patternReturnModelByGet(response)
+  }
 
-        if (!response.exists) return false
-        return response.data()
-    }
+  async getDistributorById(id) {
+    const response = await db.collection('distributors').doc(id).get()
 
-    async getDistributorByName(name) {
-        const nameFormatted = formattedData.formattedToUpperCase(name)
-        const response = await db.collection('distributors').where('name', '==', nameFormatted).get()
+    if (!response.exists) return false
+    return response.data()
+  }
 
-        if (response.empty) return false
+  async getDistributorByName(name) {
+    const nameFormatted = formattedToUpperCase(name)
+    const response = await db
+      .collection('distributors')
+      .where('name', '==', nameFormatted)
+      .get()
 
-        return formattedDistributorReturn(response)
-    }
-    async updateDistributor(id, data) {
-        const dataValid = removeInvalidData(data)
-        if (Object.keys(dataValid).length < 1) return false
-        if (dataValid.name) dataValid.name = formattedData.formattedToUpperCase(dataValid.name)
+    if (response.empty) return false
 
-        const response = await db.collection('distributors').doc(id).update(
-            { ...dataValid }
-        )
-        if (!response) return false
+    return patternReturnModelByGet(response)
+  }
 
-        return true
-    }
+  async updateDistributor(id, data) {
+    const dataValid = removeInvalidData(data)
+    if (!Object.keys(dataValid)?.length) return false
+    if (dataValid.name) dataValid.name = formattedToUpperCase(dataValid.name)
 
-    async destroyDistributorById(id) {
-        const response = await db.collection('distributors').doc(id).get()
-        if (!response.exists) return false
-        await db.collection('distributors').doc(id).delete()
+    const response = await db
+      .collection('distributors')
+      .doc(id)
+      .update({ ...dataValid })
+    if (!response) return false
 
-        return true
-    }
+    return true
+  }
 
-}
+  async destroyDistributorById(id) {
+    const response = await db.collection('distributors').doc(id).get()
+    if (!response.exists) return false
+    await db.collection('distributors').doc(id).delete()
 
-function formattedDistributorReturn(docs) {
-    let distributors = []
-    docs.forEach(doc => {
-        distributors.push({
-            id: doc.id,
-            ...doc.data()
-        })
-    })
-    return distributors
-}
-
-function removeInvalidData(data) {
-    const cloneValue = Object.assign({}, data)
-    const dataArray = Object.entries(data)
-
-    dataArray.forEach((param) => {
-        if (!param[1] && typeof param[1] != 'number') delete cloneValue[param[0]]
-    })
-
-    return cloneValue
+    return true
+  }
+  
 }
 
 module.exports = DistributorsModel
