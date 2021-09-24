@@ -2,9 +2,9 @@ const Validate = require('../service/validation')
 const ExceptionError = require('../errors/exception')
 
 const PurchaseModel = require('../models/Purchases')
-const CatalogProductsModel = require('../models/CatalogProducts')
+const ProductsModel = require('../models/Products')
 const purchaseModel = new PurchaseModel()
-const catalogProductsModel = new CatalogProductsModel()
+const productsModel = new ProductsModel()
 
 class Purchase {
   /***
@@ -31,7 +31,7 @@ class Purchase {
         observation,
       } = request.body
 
-      const product = await catalogProductsModel.getProductById(productId)
+      const product = await productsModel.getProductById(productId)
       if (!product) throw new ExceptionError(401, 'Produto não localizado')
 
       const purchase = await purchaseModel.setPurchase(
@@ -42,11 +42,11 @@ class Purchase {
         salesPrice,
         batch,
         isSaleOff,
-        observation
+        observation,
       )
 
       return response.status(201).json(purchase)
-    } catch (error) {
+    } catch (error) { console.log(error)
       return response.status(error.status || 500).json(error.message)
     }
   }

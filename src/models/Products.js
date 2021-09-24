@@ -2,7 +2,7 @@ const db = require('../configs/databaseConnection')
 const formattedData = require('../service/formatted')
 const {patternReturnModelByGet} = require('../service/patternReturns')
 
-class CatalogProductsModel {
+class productsModel {
 
   async setProduct(name, description, distributorId, category, barCode) {
     const data = {
@@ -61,4 +61,4 @@ class CatalogProductsModel {
   
 }
 
-module.exports = CatalogProductsModel
+module.exports = productsModel

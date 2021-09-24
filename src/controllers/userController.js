@@ -22,7 +22,7 @@ class User {
       const { id } = await usersModel.setUser(user, password)
 
       return response.status(201).json({ id })
-    } catch (error) {
+    } catch (error) { console.log(error)
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -32,7 +32,7 @@ class User {
       const users = await usersModel.getUsers()
 
       return response.status(201).json(users)
-    } catch (error) {
+    } catch (error) { console.log(error)
       return response.status(error.status || 500).json(error.message)
     }
   }

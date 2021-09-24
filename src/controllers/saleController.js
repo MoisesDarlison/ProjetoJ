@@ -2,9 +2,9 @@ const Validate = require('../service/validation')
 const ExceptionError = require('../errors/exception')
 
 const PurchasesModel = require('../models/Purchases')
-const CatalogProductsModel = require('../models/CatalogProducts')
+const ProductsModel = require('../models/Products')
 const purchasesModel = new PurchasesModel()
-const catalogProductsModel = new CatalogProductsModel()
+const productsModel = new ProductsModel()
 
 class Sale {
 
@@ -24,7 +24,7 @@ class Sale {
 
             return response.status(201).json(sale)
 
-        } catch (error) {
+        } catch (error) { console.log(error)
             return response.status(error.status || 500).json(error.message)
         }
     }

@@ -23,7 +23,7 @@ class Login {
         throw new ExceptionError(401, 'Login/Password invalid')
 
       return response.status(200).json(`${isValidLogin[0].user} login Success`)
-    } catch (error) {
+    } catch (error) { console.log(error)
       return response.status(error.status || 500).json(error.message)
     }
   }
