@@ -1,10 +1,10 @@
 const db = require('../configs/databaseConnection')
-const { formattedToUpperCase, removeInvalidData} = require('../service/formatted')
+const { formattedToUpperCase, removeInvalidData} = require('../service/format')
 const { patternReturnModelByGet } = require('../service/patternReturns')
 
 class DistributorsModel {
 
-  async setDistributor(name, salesMargin) {
+  async setDistributor({name, salesMargin}) {
     const data = {
       name: formattedToUpperCase(name),
       salesMargin: salesMargin ? salesMargin : 0,
@@ -24,8 +24,8 @@ class DistributorsModel {
 
   async getDistributorById(id) {
     const response = await db.collection('distributors').doc(id).get()
-
     if (!response.exists) return false
+    
     return response.data()
   }
 
@@ -41,8 +41,8 @@ class DistributorsModel {
     return patternReturnModelByGet(response)
   }
 
-  async updateDistributor(id, data) {
-    const dataValid = removeInvalidData(data)
+  async updateDistributor(id, {name, salesMargin}) {
+    const dataValid = removeInvalidData({name, salesMargin})
     if (!Object.keys(dataValid)?.length) return false
     if (dataValid.name) dataValid.name = formattedToUpperCase(dataValid.name)
 

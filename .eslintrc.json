@@ -20,7 +20,7 @@
       "exports": "always-multiline",
       "functions": "always-multiline"
       }],
-      "no-multi-spaces":"warn",
+    "no-multi-spaces":"warn",
     "no-multiple-empty-lines": [
       "warn",
       {

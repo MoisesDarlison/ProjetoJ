@@ -25,6 +25,24 @@ module.exports = {
     return true
   },
 
+  validateCategory(data) {
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+      required: ['name'],
+      additionalProperties: false,
+    }
+
+    const validate = ajv.compile(schema)
+    const valid = validate(data)
+
+    if (!valid) throw new ExceptionError(400, hasMessageError(validate))
+
+    return true
+  },
+
   validateProducts(data) {
     const schema = {
       type: 'object',
@@ -32,7 +50,7 @@ module.exports = {
         name: { type: 'string' },
         description: { type: 'string' },
         distributorId: { type: 'string' },
-        category: { type: 'string' },
+        categoryId: { type: 'string' },
         barCode: { type: 'string' },
       },
       required: ['name', 'description', 'distributorId'],
@@ -66,7 +84,7 @@ module.exports = {
     return true
   },
 
-  validatePurchase(data) {
+  validateBatch(data) {
     const schema = {
       type: 'object',
       properties: {
@@ -75,7 +93,7 @@ module.exports = {
         validAt: { type: 'string', format: 'date' },
         costPrice: { type: 'number' },
         salesPrice: { type: 'number' },
-        batch: { type: 'string' },
+        NumberBatch: { type: 'string' },
         isSaleOff: { type: 'boolean', default: false },
         observation: { type: 'string' },
       },
@@ -95,14 +113,14 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        purchaseId: { type: 'string' },
+        InventoryId: { type: 'string' },
         quantity: { type: 'number' },
         salesPrice: { type: 'number' },
         isSaleOff: { type: 'boolean', default: false },
         discount: { type: 'number' },
         observation: { type: 'string' },
       },
-      required: ['purchaseId', 'quantity', 'salesPrice'],
+      required: ['InventoryId', 'quantity', 'salesPrice'],
       additionalProperties: false,
     }
 
@@ -118,7 +136,7 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        id: { type: 'string' },
+        id: { type: 'string', nullable: false },
         name: { type: 'string', nullable: false },
         salesMargin: { type: 'number', nullable: false },
       },

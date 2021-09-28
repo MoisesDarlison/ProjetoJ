@@ -2,7 +2,6 @@ const Validate = require('../service/validation')
 const ExceptionError = require('../errors/exception')
 
 const DistributorsModel = require('../models/Distributors')
-const e = require('express')
 const distributorsModel = new DistributorsModel()
 
 class Distributor {
@@ -16,15 +15,14 @@ class Distributor {
       Validate.validateDistributor(request.body)
       const { name, salesMargin } = request.body
 
-      const distributorAlreadyExists =
-        await distributorsModel.getDistributorByName(name)
+      const distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
       if (distributorAlreadyExists)
         throw new ExceptionError(401, 'Distribuidor ja cadastrado')
 
-      const distributor = await distributorsModel.setDistributor(
+      const distributor = await distributorsModel.setDistributor({
         name,
-        salesMargin
-      )
+        salesMargin,
+      })
 
       return response.status(201).json(distributor)
     } catch (error) { console.log(error)
@@ -47,7 +45,6 @@ class Distributor {
 
   /***
    * Distributor - Lista Apenas 1  filtando pelo nome
-   * ou pelo ID
    * @param {string} id
    */
   async filter(request, response) {
@@ -64,15 +61,20 @@ class Distributor {
     }
   }
 
+  /***
+   * Distributor - Atualização pelo ID
+   * @param {string} id
+   * @param {string} name
+   * @param {number} salesMargin
+   */
   async update(request, response) {
     try {
       const { id } = request.params
       Validate.validateDistributor(request.body)
       const { name, salesMargin } = request.body
 
-      const distributorAlreadyExists =
-        await distributorsModel.getDistributorByName(name)
-      if (distributorAlreadyExists && distributorAlreadyExists.id != id)
+      const distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
+      if (distributorAlreadyExists && distributorAlreadyExists[0]?.id != id)
         throw new ExceptionError(401, 'Distribuidor ja cadastrado')
 
       const distributor = await distributorsModel.updateDistributor(id, { name, salesMargin })
@@ -85,6 +87,10 @@ class Distributor {
     }
   }
 
+  /***
+   * Distributor - Deleta pelo ID
+   * @param {string} id
+   */ 
   async destroy(request, response) {
     try {
       const { id } = request.params
