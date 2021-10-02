@@ -5,6 +5,15 @@ const addFormats = require('ajv-formats')
 const ajv = new Ajv({ allErrors: true })
 addFormats(ajv)
 
+function hasMessageError(exception) {
+  let response = ''
+  exception.errors.forEach((e, index) => {
+    response += `(${index + 1}) - *${e.instancePath}* -${e.message} `
+  })
+
+  return response
+}
+
 module.exports = {
   validateLogin(data) {
     const schema = {
@@ -113,14 +122,16 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        InventoryId: { type: 'string' },
+        productId: { type: 'string' },
+        batchId: { type: 'string' },
         quantity: { type: 'number' },
         salesPrice: { type: 'number' },
-        isSaleOff: { type: 'boolean', default: false },
+        isSaleOff: { type: 'boolean' },
         discount: { type: 'number' },
         observation: { type: 'string' },
+        salesTo: { type: 'string' },
       },
-      required: ['InventoryId', 'quantity', 'salesPrice'],
+      required: ['productId','batchId', 'quantity', 'salesPrice'],
       additionalProperties: false,
     }
 
@@ -152,13 +163,4 @@ module.exports = {
 
     return true
   },
-}
-
-function hasMessageError(exception) {
-  let response = ''
-  exception.errors.forEach((e, index) => {
-    response += `(${index + 1}) - *${e.instancePath}* -${e.message} `
-  })
-
-  return response
 }

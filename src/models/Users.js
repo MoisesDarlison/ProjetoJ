@@ -1,11 +1,17 @@
 const db = require('../configs/databaseConnection')
-const {patternReturnModelByGet} = require('../service/patternReturns')
+const bcrypt = require('bcrypt')
+const { SALT_PASSWORD } = process.env
+
+const { patternReturnModelByGet } = require('../service/patternReturns')
 
 class UsersModel {
-  
-  async setUser(user, password) {
-    const response = await db.collection('users')
-      .add({ user, password })
+  async setUser({ user, password }) {
+    const salt = bcrypt.genSaltSync(Number(SALT_PASSWORD))
+    const passwordEncrypted = bcrypt.hashSync(password, salt)
+
+    const response = await db
+      .collection('users')
+      .add({ user, password: passwordEncrypted })
 
     return { id: response.id }
   }
@@ -18,18 +24,11 @@ class UsersModel {
     return patternReturnModelByGet(response)
   }
 
-  async getUserByUserName(userParam) {
-    const response = await db.collection('users').where('user', '==', userParam).get()
-
-    if (response.empty) return false
-
-    return patternReturnModelByGet(response)
-  }
-
-  async getValidateUserPassword(user, password) {
-    const response = await db.collection('users')
-      .where('user', '==', user)
-      .where('password', '==', password).get()
+  async getUserByUserName({userName}) {
+    const response = await db
+      .collection('users')
+      .where('user', '==', userName)
+      .get()
 
     if (response.empty) return false
 

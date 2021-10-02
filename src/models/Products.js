@@ -1,6 +1,5 @@
 const db = require('../configs/databaseConnection')
 const formattedData = require('../service/format')
-const firebase = require('firebase-admin')
 
 const {patternReturnModelByGet, patternReturnModelByGetWithParents} = require('../service/patternReturns')
 
@@ -15,14 +14,13 @@ class productsModel {
       barCode: barCode ? formattedData.formattedToUpperCase(barCode) : null,
     }
     const response = await db.collection('products')
-      .doc('batches')  
-      .set(data)
+      .add(data)
 
     return { id: response.id }
   }
 
   async getProducts() {
-    const response = await db.collectionGroup('batches').get()
+    const response = await db.collectionGroup('products').get()
     
     return patternReturnModelByGet(response)
   }

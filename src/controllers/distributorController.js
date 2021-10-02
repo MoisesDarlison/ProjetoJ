@@ -25,7 +25,7 @@ class Distributor {
       })
 
       return response.status(201).json(distributor)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -38,7 +38,7 @@ class Distributor {
       const distributors = await distributorsModel.getDistributors()
 
       return response.status(200).json(distributors)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -56,7 +56,7 @@ class Distributor {
         throw new ExceptionError(401, 'Distribuidor não encontrado')
 
       return response.status(200).json(distributor)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -82,7 +82,7 @@ class Distributor {
         throw new ExceptionError(401, 'Distribuidor não encontrado')
 
       return response.status(200).json('Altualização realizada com sucesso')
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -100,7 +100,7 @@ class Distributor {
         throw new ExceptionError(401, 'Distribuidor não encontrado')
 
       return response.status(203).json()
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }

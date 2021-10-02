@@ -20,7 +20,7 @@ class Category {
       const category = await categoryModel.setCategory(name)
 
       return response.status(201).json(category)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -35,7 +35,7 @@ class Category {
       const users = await categoryModel.getCategories()
 
       return response.status(201).json(users)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -53,7 +53,7 @@ class Category {
         throw new ExceptionError(401, 'Categoria não encontrada')
 
       return response.status(200).json(category)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -80,7 +80,7 @@ class Category {
 
       return response.status(200).json('Altualização realizada com sucesso')
     } catch (error) { 
-      console.log(error)
+       
       return response.status(error.status || 500).json(error.message)
     }
   }

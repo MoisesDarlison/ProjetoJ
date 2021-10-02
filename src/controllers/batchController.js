@@ -45,8 +45,10 @@ class Inventory {
         isSaleOff,
         observation,
       )
+      if(!batch) throw new ExceptionError()
+
       return response.status(201).json(batch)
-    } catch (error) { console.log(error)
+    } catch (error) {  
       return response.status(error.status || 500).json(error.message)
     }
   }

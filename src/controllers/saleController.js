@@ -1,30 +1,57 @@
 const Validate = require('../service/validation')
 const ExceptionError = require('../errors/exception')
 
-const InventoriesModel = require('../models/Inventories')
-const ProductsModel = require('../models/Products')
-const inventoriesModel = new InventoriesModel()
-const productsModel = new ProductsModel()
+const SalesModel = require('../models/Sales')
+const BatchesModel = require('../models/Batches')
 
+const salesModel = new SalesModel()
+const batchesModel = new BatchesModel()
 class Sale {
-
   /***
    * Sale - Vende produto do estoque
    * @param {number} quantity
+   * @param {number} salesPrice
+   * @param {boolean} isSaleOff
+   * @param {number} discount
+   * @param {string} observation
+   * @param {string} salesTo
    */
-  async execute(request, response) {
+
+  async create(request, response) {
     try {
       Validate.validateSale(request.body)
-      const { InventoryId, quantity, salesPrice, isSaleOff, discount, observation } = request.body
+      const {
+        productId,
+        batchId,
+        quantity,
+        salesPrice,
+        isSaleOff,
+        discount,
+        observation,
+        salesTo,
+      } = request.body
 
-      const inventory = await inventoriesModel.getInventoryById(InventoryId)
-      if (!inventory || (inventory.remaining < quantity)) throw new ExceptionError(401, 'Produto não localizado ou Saldo insuficiente')
-      const productId = inventory.productId
-      const sale = await inventoriesModel.setSale(InventoryId, quantity, salesPrice, isSaleOff, discount, observation, productId)
+      const batch = await batchesModel.getBatchByIdProductAndIdBatch({
+        productId,
+        batchId,
+      })
+
+      if (!batch || batch.quantityRemaining < quantity)
+        throw new ExceptionError( 401, 'Produto não localizado ou Saldo insuficiente' )
+
+      const sale = await salesModel.setSale({
+        productId,
+        batch,
+        quantity,
+        salesPrice,
+        isSaleOff,
+        discount,
+        observation,
+        salesTo,
+      })
 
       return response.status(201).json(sale)
-
-    } catch (error) { console.log(error)
+    } catch (error) {
       return response.status(error.status || 500).json(error.message)
     }
   }

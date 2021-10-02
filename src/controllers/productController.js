@@ -63,7 +63,7 @@ class Product {
 
       return response.status(201).json(product)
     } catch (error) {
-      console.log(error)
+       
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -79,7 +79,7 @@ class Product {
 
       return response.status(200).json(products)
     } catch (error) {
-      console.log(error)
+       
       return response.status(error.status || 500).json(error.message)
     }
   }

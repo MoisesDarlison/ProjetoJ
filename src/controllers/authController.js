@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { SECRET_TOKEN } = process.env
 const validate = require('../service/validation')
 const ExceptionError = require('../errors/exception')
 const UsersModel = require('../models/Users')
@@ -12,18 +15,27 @@ class Login {
    */
   async auth(request, response) {
     try {
+      validate.validateLogin(request.body)
+
       const { user, password } = request.body
 
-      validate.validateLogin({ user, password })
+      const userData = await usersModel.getUserByUserName({
+        userName: user,
+      })
 
-      const isValidLogin = await usersModel
-        .getValidateUserPassword( user, password )
+      if (!userData[0]) throw new ExceptionError(401, 'Usuario/Senha invalidos')
 
-      if (!isValidLogin[0])
-        throw new ExceptionError(401, 'Login/Password invalid')
+      const isValidLogin = bcrypt.compareSync(password, userData[0].password)
 
-      return response.status(200).json(`${isValidLogin[0].user} login Success`)
-    } catch (error) { console.log(error)
+      if (!isValidLogin)
+        throw new ExceptionError(401, 'Usuario/Senha invalidos')
+
+      const token = jwt.sign({ userId: userData[0].id }, SECRET_TOKEN, {
+        expiresIn: 9000000,
+      })
+
+      return response.status(200).json({ token })
+    } catch (error) {
       return response.status(error.status || 500).json(error.message)
     }
   }
