@@ -16,7 +16,7 @@ class User {
       validate.validateLogin(request.body)
       const { user, password } = request.body
 
-      const userAlreadyExists = await usersModel.getUserByUserName(user)
+      const userAlreadyExists = await usersModel.getUserByUserName({userName:user})
       if (userAlreadyExists) throw new ExceptionError(401, 'User Already Exists')
 
       const { id } = await usersModel.setUser({user, password})

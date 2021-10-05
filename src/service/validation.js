@@ -19,8 +19,8 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        user: { type: 'string' },
-        password: { type: 'string' },
+        user: { type: 'string', nullable: false , minLength:4 },
+        password: { type: 'string', nullable: false , minLength:4 },
       },
       required: ['user', 'password'],
       additionalProperties: false,
@@ -38,7 +38,7 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string' },
+        name: { type: 'string', nullable: false , minLength:1 },
       },
       required: ['name'],
       additionalProperties: false,
@@ -56,9 +56,9 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string' },
+        name: { type: 'string', nullable: false , minLength:1},
         description: { type: 'string' },
-        distributorId: { type: 'string' },
+        distributorId: { type: 'string', nullable: false , minLength:1 },
         categoryId: { type: 'string' },
         barCode: { type: 'string' },
       },
@@ -78,8 +78,8 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string' },
-        salesMargin: { type: 'number' },
+        name: { type: 'string', nullable: false , minLength:1 },
+        salesMargin: { type: 'number' , nullable: false},
       },
       required: ['name', 'salesMargin'],
       additionalProperties: false,
@@ -97,8 +97,8 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        productId: { type: 'string' },
-        quantity: { type: 'number' },
+        productId: { type: 'string', nullable: false , minLength:1 },
+        quantity: { type: 'number', minimum: 1 },
         validAt: { type: 'string', format: 'date' },
         costPrice: { type: 'number' },
         salesPrice: { type: 'number' },
@@ -124,7 +124,7 @@ module.exports = {
       properties: {
         productId: { type: 'string' },
         batchId: { type: 'string' },
-        quantity: { type: 'number' },
+        quantity: { type: 'number', minimum: 1 },
         salesPrice: { type: 'number' },
         isSaleOff: { type: 'boolean' },
         discount: { type: 'number' },
@@ -147,8 +147,8 @@ module.exports = {
     const schema = {
       type: 'object',
       properties: {
-        id: { type: 'string', nullable: false },
-        name: { type: 'string', nullable: false },
+        id: { type: 'string', nullable: false , minLength:1 },
+        name: { type: 'string', nullable: false , minLength:1 },
         salesMargin: { type: 'number', nullable: false },
       },
       nullable: false,

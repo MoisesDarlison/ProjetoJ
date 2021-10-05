@@ -29,27 +29,33 @@ class Product {
         barCode = null,
       } = request.body
 
-      const distributor = await distributorsModel.getDistributorById( distributorId )
+      const distributor = await distributorsModel.getDistributorById(
+        distributorId,
+      )
       if (!distributor)
         throw new ExceptionError(404, 'Distribuidor não encontrado')
 
-      if(categoryId){
-        const categoryAlreadyExists = await categoryModel.getCategoryById(categoryId)
-        if(!categoryAlreadyExists)
+      if (categoryId) {
+        const categoryAlreadyExists = await categoryModel.getCategoryById(
+          categoryId,
+        )
+        if (!categoryAlreadyExists)
           throw new ExceptionError(404, 'Categoria não localizada')
       }
 
       let productAlreadyExists = null
       if (barCode) {
         productAlreadyExists = await productsModel.getProductByBarCode(barCode)
-        if (productAlreadyExists) 
+        if (productAlreadyExists)
           throw new ExceptionError(401, 'Codigo de barras ja cadastrado')
       }
 
-      productAlreadyExists = await productsModel.getProductByNameAndDistributor({
-        name,
-        distributorId,
-      })
+      productAlreadyExists = await productsModel.getProductByNameAndDistributor(
+        {
+          name,
+          distributorId,
+        },
+      )
       if (productAlreadyExists)
         throw new ExceptionError(401, 'Produto ja cadastrado')
 
@@ -63,7 +69,6 @@ class Product {
 
       return response.status(201).json(product)
     } catch (error) {
-       
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -79,7 +84,6 @@ class Product {
 
       return response.status(200).json(products)
     } catch (error) {
-       
       return response.status(error.status || 500).json(error.message)
     }
   }
@@ -92,15 +96,79 @@ class Product {
     try {
       const { id } = request.params
 
-      const product = await productsModel.getProductAndInventoryAndSalesByIdProduct(id)
-      if (!product) throw new ExceptionError(401, 'Distribuidor não encontrado')
-        
+      const product =
+        await productsModel.getProductAndInventoryAndSalesByIdProduct(id)
+      if (!product)
+        throw new ExceptionError(401, 'Distribuidor não encontrado')
+
       return response.status(200).json(product)
-    } catch (error) { 
+    } catch (error) {
       console.error(error)
       return response.status(error.status || 500).json(error.message)
     }
   }
 
+  /***
+   * Product - Atualização
+   * @param {string} ProductId
+   * @param {string} name
+   * @param {string} description
+   * @param {string} distributorId
+   * @param {string} categoryId
+   * @param {string} barCode
+   */
+  async update(request, response) {
+    try {
+      Validate.validateProducts(request.body)
+      const {
+        name,
+        description,
+        distributorId,
+        categoryId = null,
+        barCode = null,
+      } = request.body
+
+      const { id } = request.params
+
+      const distributor = await distributorsModel.getDistributorById( distributorId )
+      if (!distributor)
+        throw new ExceptionError(404, 'Distribuidor não encontrado')
+
+      if (categoryId) {
+        const categoryAlreadyExists = await categoryModel.getCategoryById( categoryId )
+        if (!categoryAlreadyExists)
+          throw new ExceptionError(404, 'Categoria não localizada')
+      }
+
+      let productAlreadyExists = null
+      if (barCode) {
+        productAlreadyExists = await productsModel.getProductByBarCode(barCode)
+        if (productAlreadyExists && productAlreadyExists[0].id != id)
+          throw new ExceptionError(401, 'Codigo de barras ja cadastrado')
+      }
+
+      productAlreadyExists = await productsModel.getProductByNameAndDistributor(
+        {
+          name,
+          distributorId,
+        },
+      )
+      if (productAlreadyExists && productAlreadyExists[0].id != id)
+        throw new ExceptionError(401, 'Produto ja cadastrado')
+
+      const product = await productsModel.updateProduct( id, {
+        name,
+        description,
+        distributorId,
+        categoryId,
+        barCode,
+      })
+      if(!product) throw new ExceptionError(401, 'Erro durante atualização')
+
+      return response.status(200).json('Atualização realizada com sucesso')
+    } catch (error) {
+      return response.status(error.status || 500).json(error.message)
+    }
+  }
 }
 module.exports = Product

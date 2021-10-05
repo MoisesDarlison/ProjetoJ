@@ -50,7 +50,23 @@ class Sale {
         salesTo,
       })
 
-      return response.status(201).json(sale)
+      return response.status(200).json(sale)
+    } catch (error) {
+      return response.status(error.status || 500).json(error.message)
+    }
+  }
+  /**
+ * Sale - Lista todas as vendas
+ * @param {number} maxLimit 
+ * @param {*} response 
+ */
+  //TODO adicionar paginação
+  async list(request, response){
+
+    try {
+      const sales = await salesModel.getSales()
+
+      return response.status(200).json(sales)
     } catch (error) {
       return response.status(error.status || 500).json(error.message)
     }

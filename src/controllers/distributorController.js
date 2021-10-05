@@ -73,13 +73,17 @@ class Distributor {
       Validate.validateDistributor(request.body)
       const { name, salesMargin } = request.body
 
-      const distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
+      let distributorAlreadyExists = await distributorsModel.getDistributorByName(name)
       if (distributorAlreadyExists && distributorAlreadyExists[0]?.id != id)
         throw new ExceptionError(401, 'Distribuidor ja cadastrado')
+        
+      distributorAlreadyExists = await distributorsModel.getDistributorById(id)
+      if (!distributorAlreadyExists)
+        throw new ExceptionError(404, 'Distribuidor não encontrado')
 
       const distributor = await distributorsModel.updateDistributor(id, { name, salesMargin })
       if (!distributor)
-        throw new ExceptionError(401, 'Distribuidor não encontrado')
+        throw new ExceptionError(401, 'Atualização não efetuada')
 
       return response.status(200).json('Altualização realizada com sucesso')
     } catch (error) {  
